@@ -1,0 +1,24 @@
+# Binaries
+bin/
+torsync
+*.exe
+*.out
+
+# Go
+vendor/
+
+# Runtime data
+*.db
+data/
+certs/
+
+# Config with secrets (keep example, ignore real config)
+config.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

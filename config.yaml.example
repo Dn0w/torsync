@@ -1,0 +1,9 @@
+node_name: "my-server-01"
+sync_dir: "/data/sync"
+mc_url: "https://mc.example.com"
+api_key: ""           # filled after registration
+node_id: ""           # filled after registration
+torrent_port: 6881
+gossip_port: 6883
+data_dir: "/var/lib/torsync"  # BoltDB + torrent data
+small_file_batch_ms: 500       # batch files smaller than 1MB
