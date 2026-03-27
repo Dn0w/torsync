@@ -1,4 +1,4 @@
-module github.com/torsync/node
+module github.com/dn0w/torsync
 
 go 1.22
 

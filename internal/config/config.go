@@ -7,17 +7,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Config holds the runtime configuration for a torsync node agent.
+// Config holds the runtime configuration for a torSync agent.
 type Config struct {
-	NodeName        string `yaml:"node_name"`
-	SyncDir         string `yaml:"sync_dir"`
-	MCURL           string `yaml:"mc_url"`
-	APIKey          string `yaml:"api_key"`
-	NodeID          string `yaml:"node_id"`
-	TorrentPort     int    `yaml:"torrent_port"`
-	GossipPort      int    `yaml:"gossip_port"`
-	DataDir         string `yaml:"data_dir"`
-	SmallFileBatchMS int   `yaml:"small_file_batch_ms"`
+	NodeName         string `yaml:"node_name"`
+	SyncDir          string `yaml:"sync_dir"`
+	SscURL           string `yaml:"ssc_url"`
+	SscAPIKey        string `yaml:"ssc_api_key"`
+	APIKey           string `yaml:"api_key"`
+	NodeID           string `yaml:"node_id"`
+	TorrentPort      int    `yaml:"torrent_port"`
+	GossipPort       int    `yaml:"gossip_port"`
+	DataDir          string `yaml:"data_dir"`
+	SmallFileBatchMS int    `yaml:"small_file_batch_ms"`
 }
 
 // Load reads and parses a YAML config file from the given path.
@@ -44,8 +45,8 @@ func Load(path string) (*Config, error) {
 	if cfg.SyncDir == "" {
 		return nil, fmt.Errorf("config: sync_dir is required")
 	}
-	if cfg.MCURL == "" {
-		return nil, fmt.Errorf("config: mc_url is required")
+	if cfg.SscURL == "" {
+		return nil, fmt.Errorf("config: ssc_url is required")
 	}
 
 	return cfg, nil

@@ -1,24 +1,24 @@
 # Binaries
-bin/
 torsync
-*.exe
-*.out
+/bin/
 
-# Go
-vendor/
-
-# Runtime data
-*.db
-data/
-certs/
-
-# Config with secrets (keep example, ignore real config)
+# Config with secrets
 config.yaml
+!config.yaml.example
 
-# OS
+# Data directories
+/data/
+*.db
+*.bolt
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# macOS
 .DS_Store
-Thumbs.db
 
 # IDE
-.vscode/
 .idea/
+.vscode/

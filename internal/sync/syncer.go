@@ -13,23 +13,23 @@ import (
 	gosync "sync"
 	"time"
 
-	"github.com/torsync/node/internal/config"
-	"github.com/torsync/node/internal/gossip"
-	"github.com/torsync/node/internal/mcclient"
-	"github.com/torsync/node/internal/store"
-	"github.com/torsync/node/internal/torrent"
-	"github.com/torsync/node/internal/watcher"
+	"github.com/dn0w/torsync/internal/config"
+	"github.com/dn0w/torsync/internal/gossip"
+	sscclient "github.com/dn0w/torsync/internal/mcclient"
+	"github.com/dn0w/torsync/internal/store"
+	"github.com/dn0w/torsync/internal/torrent"
+	"github.com/dn0w/torsync/internal/watcher"
 )
 
 // Syncer is the main coordinator that ties together the watcher, torrent engine,
-// gossip server, MC client, and local store.
+// gossip server, SSC client, and local store.
 type Syncer struct {
 	cfg     *config.Config
 	store   *store.Store
 	watcher *watcher.Watcher
 	engine  *torrent.Engine
 	gossip  *gossip.GossipServer
-	mc      *mcclient.Client
+	mc      *sscclient.Client
 
 	mu      gosync.RWMutex
 	paused  bool
@@ -43,7 +43,7 @@ func New(
 	w *watcher.Watcher,
 	eng *torrent.Engine,
 	gs *gossip.GossipServer,
-	mc *mcclient.Client,
+	mc *sscclient.Client,
 ) *Syncer {
 	return &Syncer{
 		cfg:     cfg,
@@ -65,7 +65,7 @@ func (s *Syncer) Start(ctx context.Context) error {
 		s.handleGossipMessage(msg)
 	})
 
-	// Start MC heartbeat loop.
+	// Start SSC heartbeat loop.
 	go s.runHeartbeatLoop(ctx)
 
 	<-ctx.Done()
@@ -337,10 +337,10 @@ func (s *Syncer) handleTombstone(payload gossip.TombstonePayload) {
 	}
 }
 
-// runHeartbeatLoop sends heartbeats to the MC and updates peers when topology changes.
+// runHeartbeatLoop sends heartbeats to the SSC and updates peers when topology changes.
 func (s *Syncer) runHeartbeatLoop(ctx context.Context) {
 	lastSuccess := func() time.Time {
-		v, _ := s.store.GetMeta("last_mc_success")
+		v, _ := s.store.GetMeta("last_ssc_success")
 		if v == "" {
 			return time.Time{}
 		}
@@ -364,23 +364,23 @@ func (s *Syncer) runHeartbeatLoop(ctx context.Context) {
 		},
 		lastSuccess,
 		func(t time.Time) {
-			_ = s.store.SetMeta("last_mc_success", t.Format(time.RFC3339))
+			_ = s.store.SetMeta("last_ssc_success", t.Format(time.RFC3339))
 		},
 		func() int {
 			return gracePeriod
 		},
-		func(peers []mcclient.PeerInfo) {
+		func(peers []sscclient.PeerInfo) {
 			s.updatePeers(peers)
 		},
 		func() {
-			log.Println("sync: node or swarm disabled by MC, pausing")
+			log.Println("sync: node or swarm disabled by SSC, pausing")
 			s.Pause()
 		},
 	)
 }
 
 // updatePeers refreshes the local peer store and gossip connections.
-func (s *Syncer) updatePeers(peers []mcclient.PeerInfo) {
+func (s *Syncer) updatePeers(peers []sscclient.PeerInfo) {
 	for _, p := range peers {
 		record := store.PeerRecord{
 			NodeID:          p.NodeID,

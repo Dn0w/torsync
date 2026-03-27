@@ -1,6 +1,7 @@
 node_name: "my-server-01"
 sync_dir: "/data/sync"
-mc_url: "https://mc.example.com"
+ssc_url: "https://ssc.example.com"
+ssc_api_key: "your-instance-api-key-here"
 api_key: ""           # filled after registration
 node_id: ""           # filled after registration
 torrent_port: 6881
