@@ -1,10 +1,52 @@
-node_name: "my-server-01"
-sync_dir: "/data/sync"
+# torSync node configuration
+# Copy to the platform default path and edit before running.
+#
+# Default paths:
+#   Linux:   /etc/torsync/config.yaml
+#   macOS:   ~/.config/torsync/config.yaml
+#   Windows: C:\ProgramData\torSync\config.yaml
+
+# ── Node identity ────────────────────────────────────────────────────────────
+# Populated automatically by "torsync import-key". You can also set manually.
+node_name: "my-node"
+node_id: ""      # populated by import-key
+api_key: ""      # populated by import-key
+
+# ── SSC connection ───────────────────────────────────────────────────────────
+# Required for licensed tier. Leave empty for free tier (2-node swarms only).
 ssc_url: "https://ssc.example.com"
-ssc_api_key: "your-instance-api-key-here"
-api_key: ""           # filled after registration
-node_id: ""           # filled after registration
-torrent_port: 6881
-gossip_port: 6883
-data_dir: "/var/lib/torsync"  # BoltDB + torrent data
-small_file_batch_ms: 500       # batch files smaller than 1MB
+
+# ── License key ──────────────────────────────────────────────────────────────
+# Path to the .key file downloaded from SSC.
+# Populated automatically by "torsync import-key".
+license_key_path: ""
+
+# ── Sync directories ─────────────────────────────────────────────────────────
+# One entry per directory to watch and sync across the swarm.
+# Free tier: only the first entry is used.
+# Licensed tier: all entries are watched and synced independently.
+sync_dirs:
+  - path: "/data/sync"
+  # - path: "/data/backups"   # licensed tier only
+
+# ── Network ──────────────────────────────────────────────────────────────────
+torrent_port: 6881   # BitTorrent transfer port (TCP/UDP)
+gossip_port: 6883    # Internal peer gossip port (TCP)
+
+# ── Storage ──────────────────────────────────────────────────────────────────
+# Platform defaults:
+#   Linux:   /var/lib/torsync
+#   macOS:   ~/Library/Application Support/torSync
+#   Windows: C:\ProgramData\torSync
+data_dir: ""   # leave empty to use platform default
+
+# ── Performance ──────────────────────────────────────────────────────────────
+small_file_batch_ms: 500   # ms to batch small file events before syncing
+
+# ── Web management UI ────────────────────────────────────────────────────────
+web_port: 8080
+web_username: "admin"
+# bcrypt hash of the admin password.
+# Generate with: torsync service install && visit http://127.0.0.1:8080
+# or pre-hash with: htpasswd -bnBC 10 "" 'yourpassword' | tr -d ':\n'
+web_password_hash: ""
